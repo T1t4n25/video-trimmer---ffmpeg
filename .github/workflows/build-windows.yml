@@ -28,6 +28,7 @@ jobs:
     - name: Build application
       run: |
         python build.py
+        ls
 
     - name: Create icons directory if missing
       run: |
