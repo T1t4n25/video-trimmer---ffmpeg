@@ -15,22 +15,88 @@ class VideoProcessor:
     
     def __init__(self):
         """Initialize the video processor"""
-        # Verify ffmpeg is installed
+        # Set up ffmpeg path
+        self.ffmpeg_path = self._get_ffmpeg_path()
+        # Verify ffmpeg is accessible
         self._check_ffmpeg()
+    
+    def _get_ffmpeg_path(self) -> str:
+        """
+        Determine the path to ffmpeg executable
+        First checks for bundled ffmpeg, then falls back to system ffmpeg
+        
+        Returns:
+            Path to ffmpeg executable
+        """
+        import sys
+        import platform
+        
+        # Get the directory where the script or executable is located
+        if getattr(sys, 'frozen', False):
+            # We're running in a bundle (PyInstaller or similar)
+            base_path = sys._MEIPASS
+        else:
+            # We're running in a normal Python environment
+            base_path = os.path.dirname(os.path.abspath(__file__))
+        
+        # Check platform to determine executable name and location
+        system = platform.system()
+        
+        if system == "Windows":
+            # For Windows, check the 'ffmpeg' subdirectory
+            ffmpeg_dir = os.path.join(base_path, 'ffmpeg', 'bin')
+            ffmpeg_exe = os.path.join(ffmpeg_dir, 'ffmpeg.exe')
+            
+            if os.path.isfile(ffmpeg_exe):
+                return ffmpeg_dir  # Return directory containing ffmpeg
+            
+        elif system == "Darwin":  # macOS
+            # For macOS, check the 'ffmpeg' subdirectory
+            ffmpeg_dir = os.path.join(base_path, 'ffmpeg')
+            ffmpeg_exe = os.path.join(ffmpeg_dir, 'ffmpeg')
+            
+            if os.path.isfile(ffmpeg_exe):
+                return ffmpeg_dir
+                
+        elif system == "Linux":
+            # For Linux, check the 'ffmpeg' subdirectory
+            ffmpeg_dir = os.path.join(base_path, 'ffmpeg')
+            ffmpeg_exe = os.path.join(ffmpeg_dir, 'ffmpeg')
+            
+            if os.path.isfile(ffmpeg_exe):
+                return ffmpeg_dir
+        
+        # If no bundled ffmpeg is found, return None to use system ffmpeg
+        return None
     
     def _check_ffmpeg(self) -> None:
         """Check if ffmpeg is installed and accessible"""
         try:
-            subprocess.run(
-                ["ffmpeg", "-version"], 
-                stdout=subprocess.PIPE, 
-                stderr=subprocess.PIPE, 
-                check=True
-            )
+            # If we have a bundled ffmpeg path, use it for the check
+            if self.ffmpeg_path:
+                # Set environment variable for ffmpeg-python to use our bundled ffmpeg
+                os.environ["FFMPEG_BINARY"] = os.path.join(self.ffmpeg_path, "ffmpeg")
+                os.environ["FFPROBE_BINARY"] = os.path.join(self.ffmpeg_path, "ffprobe")
+                
+                # Test the bundled ffmpeg
+                subprocess.run(
+                    [os.path.join(self.ffmpeg_path, "ffmpeg"), "-version"], 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE, 
+                    check=True
+                )
+            else:
+                # Fall back to system ffmpeg
+                subprocess.run(
+                    ["ffmpeg", "-version"], 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE, 
+                    check=True
+                )
         except (subprocess.SubprocessError, FileNotFoundError):
             raise RuntimeError(
-                "FFmpeg not found. Please install FFmpeg to use this application. "
-                "Visit https://ffmpeg.org/download.html for instructions."
+                "FFmpeg not found. Either bundle ffmpeg with the application or "
+                "install FFmpeg on your system. Visit https://ffmpeg.org/download.html for instructions."
             )
     
     def get_video_duration(self, file_path: str) -> float:
