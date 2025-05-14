@@ -28,8 +28,8 @@ else:  # Linux
 
 # Get additional data files
 added_files = ffmpeg_files + [
-    ('icons', 'icons'),  # Copy entire icons folder
-    ('translations', 'translations')  # Copy entire translations folder
+    ('translations', 'translations'),  # Copy translations folder
+    ('icons', 'icons')  
 ]
 
 a = Analysis(
@@ -64,15 +64,15 @@ exe = EXE(
     name='VideoTrimmer',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=True,  # Strip symbols from binaries
-    upx=True,    # Enable UPX compression
+    strip=True,
+    upx=True,
     upx_exclude=[],
     console=False,
+    icon='icons/video_trimmer_2.ico',  # Update icon path
     disable_windowed_traceback=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='app_icon.ico' if os.path.exists('app_icon.ico') else None,
 )
 
 coll = COLLECT(
@@ -85,6 +85,21 @@ coll = COLLECT(
     upx_exclude=[],
     name='VideoTrimmer',
 )
+
+# Ensure directories exist at the correct level
+build_dir = os.path.join('builds', 'VideoTrimmer')
+icons_dir = os.path.join(build_dir, 'icons')
+if not os.path.exists(icons_dir):
+    os.makedirs(icons_dir)
+
+# Copy entire icons folder to the same level as _internal
+icons_src = 'icons'
+if os.path.exists(icons_src):
+    for file in os.listdir(icons_src):
+        src_file = os.path.join(icons_src, file)
+        dst_file = os.path.join(icons_dir, file)
+        if os.path.isfile(src_file):
+            shutil.copy2(src_file, dst_file)
 
 # Create builds directory if it doesn't exist
 if not os.path.exists('builds'):

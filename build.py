@@ -150,7 +150,6 @@ def check_env_variables():
 
 def install_requirements():
     """Install required packages from requirements.txt"""
-    print("Installing requirements...")
     try:
         subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
         return True
