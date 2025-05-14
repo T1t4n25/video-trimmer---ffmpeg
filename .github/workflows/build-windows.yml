@@ -54,15 +54,16 @@ jobs:
         $arch = [System.Environment]::GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
         $zipName = "VideoTrimmer_Windows_$arch"
         
-        # Move to the builds directory
-        Set-Location builds
+        # Extract the content to builds directory
+        New-Item -ItemType Directory -Force -Path "builds\ForZip"
+        Copy-Item -Path "builds\VideoTrimmer\*" -Destination "builds\ForZip\" -Recurse -Force
         
-        # Create zip file containing the entire VideoTrimmer directory
-        Compress-Archive -Path "VideoTrimmer\*" -DestinationPath "$zipName.zip" -Force
+        # Create zip file from the extracted content
+        Compress-Archive -Path "builds\ForZip\*" -DestinationPath "builds\$zipName.zip" -Force
         
         # Verify the contents of the zip
-        Write-Output "Created zip file in builds folder: $zipName.zip"
-        Get-ChildItem "$zipName.zip"
+        Write-Output "Created zip file in builds folder: builds\$zipName.zip"
+        Get-ChildItem "builds\$zipName.zip"
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
