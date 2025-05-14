@@ -1,19 +1,17 @@
-#!/usr/bin/env python3
 """
 Video Trimmer GUI - A PyQt6 application for trimming video files
 """
 
 import os
 import sys
-import re
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QPushButton, QFileDialog, QLabel, QListWidget, QCheckBox,
-    QDoubleSpinBox, QMessageBox, QProgressBar, QFrame, QComboBox,
+    QPushButton, QFileDialog, QLabel, QListWidget, QCheckBox, 
+    QMessageBox, QProgressBar, QFrame, QComboBox,
     QLineEdit, QTimeEdit
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QTime, QTranslator, QLocale
-from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtCore import Qt, pyqtSignal, QTime, QTranslator, QLocale
+from PyQt6.QtGui import QFont
 
 # Import video processor module
 from video_processor import VideoProcessor

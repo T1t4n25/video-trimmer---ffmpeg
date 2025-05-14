@@ -22,6 +22,11 @@ def main():
     # Set application style
     app.setStyle("Fusion")
     
+    # Set application icon
+    icon_path = os.path.join('icons', 'video_trimmer_2.ico')  # Assuming icon is named app.png
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
+    
     # Create and show the main window
     window = VideoTrimmerGUI()
     window.show()

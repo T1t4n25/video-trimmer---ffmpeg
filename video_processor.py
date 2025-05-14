@@ -6,7 +6,7 @@ Handles all video processing operations
 
 import os
 import subprocess
-from typing import Optional, Tuple, List
+from typing import Optional
 import ffmpeg
 
 
