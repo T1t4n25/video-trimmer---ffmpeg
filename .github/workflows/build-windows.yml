@@ -53,8 +53,11 @@ jobs:
         $system = [System.Environment]::OSVersion.Platform
         $arch = [System.Environment]::GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
         $zipName = "VideoTrimmer_Windows_$arch"
-        Compress-Archive -Path "builds\VideoTrimmer\*" -DestinationPath "$zipName.zip"
-      
+        # First ensure we're in the correct directory
+        Set-Location builds
+        # Create zip including everything in VideoTrimmer folder
+        Compress-Archive -Path "VideoTrimmer" -DestinationPath "../$zipName.zip" -Force
+
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
