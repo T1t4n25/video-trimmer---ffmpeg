@@ -48,6 +48,7 @@ jobs:
         
         # Extract the content to builds directory
         New-Item -ItemType Directory -Force -Path "builds\ForZip"
+        New-Item -ItemType Directory -Force -Path "builds\ForZip\VideoTrimmer\icons"
         Copy-Item -Path "builds\VideoTrimmer\icons\*" -Destination "builds\ForZip\VideoTrimmer\icons" -Recurse -Force
         # extract $zipName from root to builds\ForZip
         if (Test-Path -Path "$zipName.zip") {
