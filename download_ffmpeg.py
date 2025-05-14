@@ -6,13 +6,11 @@ Download FFmpeg script - downloads the appropriate FFmpeg binaries for the curre
 import os
 import platform
 import shutil
-import subprocess
 import sys
 import zipfile
 import tarfile
 import tempfile
 from urllib.request import urlretrieve
-from pathlib import Path
 
 # URLs for each platform
 FFMPEG_URLS = {

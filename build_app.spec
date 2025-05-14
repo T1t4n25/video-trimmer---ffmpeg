@@ -12,7 +12,7 @@ block_cipher = None
 # Determine system
 system = platform.system()
 
-# Define paths for bundled ffmpeg
+# Define paths for bundled ffmpeg and other resources
 if system == "Windows":
     ffmpeg_dir = os.path.join('ffmpeg', 'bin')
     ffmpeg_files = [(os.path.join(ffmpeg_dir, file), os.path.join('ffmpeg', 'bin', file)) 
@@ -27,7 +27,10 @@ else:  # Linux
                     for file in ['ffmpeg', 'ffprobe']]
 
 # Get additional data files
-added_files = ffmpeg_files
+added_files = ffmpeg_files + [
+    ('icons', 'icons'),  # Copy entire icons folder
+    ('translations', 'translations')  # Copy entire translations folder
+]
 
 a = Analysis(
     ['main.py'],
@@ -38,11 +41,17 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=[
+        'matplotlib', 'notebook', 'PIL', 'pandas', 'numpy', 
+        'tk', 'tkinter', 'scipy', 'email', 'html', 'xml',
+        'pkg_resources', 'docutils'
+    ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
+    distpath=os.path.join(os.getcwd(), 'builds'),  # Set output directory to 'builds'
+    workpath=os.path.join(os.getcwd(), 'builds', 'build')  # Set work directory
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
@@ -55,8 +64,9 @@ exe = EXE(
     name='VideoTrimmer',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
-    upx=True,
+    strip=True,  # Strip symbols from binaries
+    upx=True,    # Enable UPX compression
+    upx_exclude=[],
     console=False,
     disable_windowed_traceback=False,
     target_arch=None,
@@ -75,6 +85,10 @@ coll = COLLECT(
     upx_exclude=[],
     name='VideoTrimmer',
 )
+
+# Create builds directory if it doesn't exist
+if not os.path.exists('builds'):
+    os.makedirs('builds')
 
 # For macOS, create a .app bundle
 if system == "Darwin":
