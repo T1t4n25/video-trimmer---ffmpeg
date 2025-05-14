@@ -51,7 +51,7 @@ jobs:
         Copy-Item -Path "builds\VideoTrimmer\*" -Destination "builds\ForZip\" -Recurse -Force
         # extract $zipName from root to builds\ForZip
         if (Test-Path -Path "$zipName.zip") {
-            Expand-Archive -Path "builds\$zipName.zip" -DestinationPath "builds\ForZip" -Force
+            Expand-Archive -Path "$zipName.zip" -DestinationPath "builds\ForZip" -Force
         }
         # Create zip file from the extracted content
         Compress-Archive -Path "builds\ForZip\*" -DestinationPath "builds\$zipName.zip" -Force
