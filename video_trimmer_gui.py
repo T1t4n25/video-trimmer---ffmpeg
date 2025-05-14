@@ -19,6 +19,7 @@ from PyQt6.QtGui import QIcon, QFont
 from video_processor import VideoProcessor
 
 
+
 class TimeEdit(QWidget):
     """Custom time edit widget with HH:MM:SS.ms format"""
     
@@ -69,6 +70,11 @@ class TimeEdit(QWidget):
         msecs = qtime.msec()
         
         return hours * 3600 + minutes * 60 + seconds + msecs / 1000
+    
+    def update_layout_direction(self, direction):
+        """Update the layout direction for this widget"""
+        self.setLayoutDirection(direction)
+        self.time_edit.setLayoutDirection(direction)
 
 
 class VideoTrimmerGUI(QMainWindow):
@@ -127,7 +133,58 @@ class VideoTrimmerGUI(QMainWindow):
         lang_layout.addStretch()
         
         main_layout.addLayout(lang_layout)
-    
+    def setup_font_for_language(self, language_code):
+        """Set up proper font for the selected language"""
+        if language_code == "ar":
+            # List of fonts that work well with Arabic
+            arabic_fonts = ["Tahoma", "Arial", "Segoe UI", "Traditional Arabic"]
+            
+            # Try to find an installed Arabic-compatible font
+            selected_font = None
+            for font_name in arabic_fonts:
+                font = QFont(font_name)
+                if font.exactMatch():
+                    selected_font = font_name
+                    break
+            
+            if selected_font:
+                app = QApplication.instance()
+                default_font = QFont(selected_font, 10)
+                app.setFont(default_font)
+        else:
+            # Reset to default font for non-Arabic languages
+            app = QApplication.instance()
+            default_font = QFont("Arial", 10)
+            app.setFont(default_font)
+
+    def adjust_rtl_specific_widgets(self):
+        """Make specific adjustments for RTL interfaces"""
+        direction = Qt.LayoutDirection.RightToLeft if self.current_language == "ar" else Qt.LayoutDirection.LeftToRight
+        
+        # Update TimeEdit widgets
+        self.start_time_edit.update_layout_direction(direction)
+        self.end_time_edit.update_layout_direction(direction)
+        
+        if self.current_language == "ar":
+            # For RTL languages, adjust alignment of certain widgets
+            
+            # Set text alignment for labels
+            for label in self.findChildren(QLabel):
+                label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+            
+            # Set text alignment for line edits
+            for line_edit in self.findChildren(QLineEdit):
+                line_edit.setAlignment(Qt.AlignmentFlag.AlignRight)
+            
+            # Note: We removed the problematic QFileDialog line
+        else:
+            # For LTR languages, reset to default alignments
+            for label in self.findChildren(QLabel):
+                label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+            
+            for line_edit in self.findChildren(QLineEdit):
+                line_edit.setAlignment(Qt.AlignmentFlag.AlignLeft)
+                
     def setup_file_selection(self, main_layout):
         """Set up the file selection section of the GUI"""
         # File selection section
@@ -351,8 +408,24 @@ class VideoTrimmerGUI(QMainWindow):
             # Remove translator for English
             QApplication.instance().removeTranslator(self.translator)
         
+        # Set layout direction based on language
+        if language_code == "ar":
+            # Set Right-to-Left layout direction for Arabic
+            self.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+            QApplication.instance().setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        else:
+            # Set Left-to-Right layout direction for other languages
+            self.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+            QApplication.instance().setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        
+        # Set up appropriate font
+        self.setup_font_for_language(language_code)
+        
         # Update UI text
         self.retranslateUi()
+        
+        # Adjust specific widgets for RTL/LTR
+        self.adjust_rtl_specific_widgets()
     
     def retranslateUi(self):
         """Update all UI text with current language"""
