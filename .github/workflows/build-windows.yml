@@ -61,12 +61,7 @@ jobs:
         Write-Output "Created zip file in builds folder: builds\$zipName.zip"
         Get-ChildItem "builds\$zipName.zip"
 
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: VideoTrimmer-Windows
-        path: builds/VideoTrimmer/
-        
+
     - name: Upload zip artifact
       uses: actions/upload-artifact@v4
       with:
