@@ -25,19 +25,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
       
-    - name: Download FFmpeg
-      run: |
-        python download_ffmpeg.py
-      
     - name: Build application
       run: |
-        pyinstaller build_app.spec
-      
-    - name: Verify build output
-      run: |
-        dir builds\VideoTrimmer
-        dir builds\VideoTrimmer\icons
-      
+        python build.py
+
     - name: Create icons directory if missing
       run: |
         if (-not (Test-Path -Path "builds\VideoTrimmer\icons")) {
@@ -57,7 +48,10 @@ jobs:
         # Extract the content to builds directory
         New-Item -ItemType Directory -Force -Path "builds\ForZip"
         Copy-Item -Path "builds\VideoTrimmer\*" -Destination "builds\ForZip\" -Recurse -Force
-        
+        # extract $zipName from root to builds\ForZip
+        if (Test-Path -Path "$zipName.zip") {
+            Expand-Archive -Path "builds\$zipName.zip" -DestinationPath "builds\ForZip" -Force
+        }
         # Create zip file from the extracted content
         Compress-Archive -Path "builds\ForZip\*" -DestinationPath "builds\$zipName.zip" -Force
         
