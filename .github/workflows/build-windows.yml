@@ -38,7 +38,7 @@ jobs:
       
     - name: Copy icons to build directory
       run: |
-        Copy-Item -Path "icons\*" -Destination "builds\VideoTrimmer\icons\" -Recurse -Force
+        Copy-Item -Path "icons\*" -Destination "builds\VideoTrimmer\icons\" -Recurse -Force 
       
     - name: Create zip archive
       run: |
@@ -48,7 +48,7 @@ jobs:
         
         # Extract the content to builds directory
         New-Item -ItemType Directory -Force -Path "builds\ForZip"
-        Copy-Item -Path "builds\VideoTrimmer\*" -Destination "builds\ForZip\" -Recurse -Force
+        Copy-Item -Path "builds\VideoTrimmer\*" -Destination "builds\ForZip\VideoTrimmer\" -Recurse -Force
         # extract $zipName from root to builds\ForZip
         if (Test-Path -Path "$zipName.zip") {
             Expand-Archive -Path "$zipName.zip" -DestinationPath "builds\ForZip" -Force
