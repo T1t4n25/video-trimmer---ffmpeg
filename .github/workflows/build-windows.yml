@@ -54,14 +54,14 @@ jobs:
         $arch = [System.Environment]::GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
         $zipName = "VideoTrimmer_Windows_$arch"
         
-        # Change to parent directory containing the builds folder
-        Set-Location $env:GITHUB_WORKSPACE
+        # Move to the builds directory
+        Set-Location builds
         
         # Create zip file containing the entire VideoTrimmer directory
-        Compress-Archive -Path "builds\VideoTrimmer\*" -DestinationPath "$zipName.zip" -Force
+        Compress-Archive -Path "VideoTrimmer\*" -DestinationPath "$zipName.zip" -Force
         
         # Verify the contents of the zip
-        Write-Output "Created zip file: $zipName.zip"
+        Write-Output "Created zip file in builds folder: $zipName.zip"
         Get-ChildItem "$zipName.zip"
 
     - name: Upload build artifact
@@ -74,4 +74,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: VideoTrimmer-Windows-Zip
-        path: VideoTrimmer_Windows_*.zip
+        path: builds/VideoTrimmer_Windows_*.zip
