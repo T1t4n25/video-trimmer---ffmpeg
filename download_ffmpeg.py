@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Download FFmpeg script - downloads the appropriate FFmpeg binaries for the current platform
 """
@@ -73,8 +72,8 @@ def extract_windows_ffmpeg(zip_file):
         os.makedirs(os.path.join(FFMPEG_DIR, 'bin'), exist_ok=True)
         
         # Copy necessary files
-        shutil.copy2(bin_dir, os.path.join(FFMPEG_DIR, 'bin'))
-        shutil.copy2(bin_dir, os.path.join(FFMPEG_DIR, 'bin'))
+        shutil.copy2(os.path.join(bin_dir, 'ffmpeg.exe'), os.path.join(FFMPEG_DIR, 'bin'))
+        shutil.copy2(os.path.join(bin_dir, 'ffprobe.exe'), os.path.join(FFMPEG_DIR, 'bin'))
         
         print(f"FFmpeg extracted to {FFMPEG_DIR}/bin")
     
