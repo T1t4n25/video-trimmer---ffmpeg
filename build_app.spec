@@ -27,7 +27,8 @@ else:  # Linux
                     for file in ['ffmpeg', 'ffprobe']]
 
 # Get additional data files
-added_files = ffmpeg_files + [
+added_files = [
+    (ffmpeg_dir, os.path.join('ffmpeg', 'bin')),
     ('translations', 'translations'),  # Copy translations folder
     ('icons', 'icons')  
 ]
